@@ -38,13 +38,52 @@ activities = {
         "schedule": "Mondays, Wednesdays, Fridays, 2:00 PM - 3:00 PM",
         "max_participants": 30,
         "participants": ["john@mergington.edu", "olivia@mergington.edu"]
+    },
+    # Sports (2 added)
+    "Soccer Team": {
+        "description": "Team practices, drills and inter-school matches",
+        "schedule": "Tuesdays and Thursdays, 4:00 PM - 6:00 PM",
+        "max_participants": 22,
+        "participants": ["alex@mergington.edu", "nina@mergington.edu"]
+    },
+    "Swimming Club": {
+        "description": "Lap training, technique and lifeguard basics",
+        "schedule": "Wednesdays, 3:30 PM - 5:00 PM",
+        "max_participants": 16,
+        "participants": ["luke@mergington.edu", "maya@mergington.edu"]
+    },
+    # Artistic (2 added)
+    "Art Workshop": {
+        "description": "Painting, drawing and mixed media sessions",
+        "schedule": "Mondays, 4:00 PM - 5:30 PM",
+        "max_participants": 18,
+        "participants": ["isabella@mergington.edu", "ryan@mergington.edu"]
+    },
+    "Drama Club": {
+        "description": "Acting exercises, script work and school productions",
+        "schedule": "Fridays, 4:00 PM - 6:00 PM",
+        "max_participants": 25,
+        "participants": ["oliver@mergington.edu", "ava@mergington.edu"]
+    },
+    # Intellectual (2 added)
+    "Math Olympiad": {
+        "description": "Problem solving, training for competitions and team meets",
+        "schedule": "Thursdays, 3:30 PM - 5:00 PM",
+        "max_participants": 15,
+        "participants": ["sophia.m@mergington.edu", "ethan@mergington.edu"]
+    },
+    "Science Club": {
+        "description": "Hands-on experiments, research projects and science fairs",
+        "schedule": "Wednesdays, 4:00 PM - 5:30 PM",
+        "max_participants": 20,
+        "participants": ["grace@mergington.edu", "henry@mergington.edu"]
     }
 }
 
 
-@app.get("/")
+@app.get("/", response_class=RedirectResponse, status_code=307)
 def root():
-    return RedirectResponse(url="/static/index.html")
+    return "/static/index.html"
 
 
 @app.get("/activities")
@@ -62,6 +101,33 @@ def signup_for_activity(activity_name: str, email: str):
     # Get the specific activity
     activity = activities[activity_name]
 
+    # Validate student is not already signed up
+    if email in activity["participants"]:
+        raise HTTPException(status_code=400, detail="Student is already signed up")
+
+    # Validate capacity
+    if len(activity["participants"]) >= activity["max_participants"]:
+        raise HTTPException(status_code=400, detail="Activity is full")
+
     # Add student
     activity["participants"].append(email)
     return {"message": f"Signed up {email} for {activity_name}"}
+
+
+@app.delete("/activities/{activity_name}/participant/{email}")
+def remove_participant(activity_name: str, email: str):
+    """Remove a participant from an activity"""
+    # Validate activity exists
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+
+    # Get the specific activity
+    activity = activities[activity_name]
+
+    # Check if student is actually signed up
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=404, detail="Student is not signed up for this activity")
+
+    # Remove student
+    activity["participants"].remove(email)
+    return {"message": f"Removed {email} from {activity_name}"}

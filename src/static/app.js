@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
           participantsHtml = `<div class="participants info">No participants yet</div>`;
         } else {
           const items = details.participants
-            .map((p) => `<li>${escapeHtml(p)}</li>`)
+            .map((p) => `<li>${escapeHtml(p)}<button class="delete-participant" data-activity="${escapeHtml(name)}" data-email="${escapeHtml(p)}">✖</button></li>`)
             .join("");
           participantsHtml = `<div class="participants"><h5>Participants</h5><ul>${items}</ul></div>`;
         }
@@ -102,6 +102,44 @@ document.addEventListener("DOMContentLoaded", () => {
       messageDiv.className = "error";
       messageDiv.classList.remove("hidden");
       console.error("Error signing up:", error);
+    }
+  });
+
+  // Handle participant deletion
+  document.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("delete-participant")) {
+      const activity = event.target.dataset.activity;
+      const email = event.target.dataset.email;
+      
+      try {
+        const response = await fetch(
+          `/activities/${encodeURIComponent(activity)}/participant/${encodeURIComponent(email)}`,
+          { method: "DELETE" }
+        );
+
+        const result = await response.json();
+
+        if (response.ok) {
+          messageDiv.textContent = result.message;
+          messageDiv.className = "success";
+          await fetchActivities(); // Refresh the activity list
+        } else {
+          messageDiv.textContent = result.detail || "An error occurred";
+          messageDiv.className = "error";
+        }
+
+        messageDiv.classList.remove("hidden");
+
+        // Hide message after 5 seconds
+        setTimeout(() => {
+          messageDiv.classList.add("hidden");
+        }, 5000);
+      } catch (error) {
+        messageDiv.textContent = "Failed to remove participant. Please try again.";
+        messageDiv.className = "error";
+        messageDiv.classList.remove("hidden");
+        console.error("Error removing participant:", error);
+      }
     }
   });
 

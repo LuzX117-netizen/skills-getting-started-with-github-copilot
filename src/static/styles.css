@@ -89,12 +89,15 @@ section h3 {
 }
 
 .participants ul {
-  list-style: disc inside;
+  list-style: none;
   margin: 0;
   padding: 0;
 }
 
 .participants li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background: linear-gradient(180deg, #ffffff 0%, #fbfbff 100%);
   padding: 8px 10px;
   border-radius: 6px;
@@ -102,6 +105,21 @@ section h3 {
   border: 1px solid #f0f0f5;
   font-size: 14px;
   color: #333;
+}
+
+.delete-participant {
+  background: none;
+  border: none;
+  color: #e53935;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.delete-participant:hover {
+  background-color: rgba(229, 57, 53, 0.1);
 }
 
 .form-group {

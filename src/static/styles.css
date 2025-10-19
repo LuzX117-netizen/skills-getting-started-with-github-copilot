@@ -101,10 +101,15 @@ section h3 {
   background: linear-gradient(180deg, #ffffff 0%, #fbfbff 100%);
   padding: 8px 10px;
   border-radius: 6px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   border: 1px solid #f0f0f5;
   font-size: 14px;
   color: #333;
+  transition: background-color 0.2s;
+}
+
+.participants li:hover {
+  background: linear-gradient(180deg, #f8f9ff 0%, #f3f4ff 100%);
 }
 
 .delete-participant {
@@ -113,13 +118,16 @@ section h3 {
   color: #e53935;
   cursor: pointer;
   padding: 4px 8px;
-  font-size: 14px;
+  font-size: 13px;
   border-radius: 4px;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
+  opacity: 0.7;
+  margin-left: 8px;
 }
 
 .delete-participant:hover {
   background-color: rgba(229, 57, 53, 0.1);
+  opacity: 1;
 }
 
 .form-group {
